@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  BrowserRouter,
+  HashRouter,
   Switch,
   Route,
   Redirect,
@@ -14,14 +14,14 @@ import './App.css';
 function App() {
   return (
     <CtxApp>
-      <BrowserRouter>
+      <HashRouter basename="/">
         <Switch>
           {routes.map((route) => (
             <Route path={route.path} component={route.component} exact={route.exact} />
           ))}
           <Redirect to={{ pathname: '/' }} />
         </Switch>
-      </BrowserRouter>
+      </HashRouter>
     </CtxApp>
   );
 }
