@@ -24,10 +24,14 @@ function CustomSliderRaw({ backgroundImage, ...args }) {
       marginRight: '0px !important',
     },
     track: {
-    // display: 'none !important',
+      width: '2px !important',
+      transition: 'all 0.7s !important',
+      borderRadius: '10px 10px 15px 10px',
+      left: 17,
     },
     thumb: {
       visibility: 'hidden',
+      transition: 'all 0.7s !important',
     },
     mark: {
       visibility: 'hidden',

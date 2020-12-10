@@ -186,7 +186,7 @@ function ColorModel() {
         <LiveHelpIcon fontSize="large" />
       </Grid>
       <Grid container spacing={3} style={{ height: '86vh' }}>
-        <Grid item xs="9" style={{ height: '100%', maxHeight: '100%' }}>
+        <Grid item xs="8" xl="9" style={{ height: '100%', maxHeight: '100%' }}>
           <Paper style={{ height: '100%', maxHeight: '100%' }}>
             <Grid container direction="row" spacing={3} justify="space-between" style={{ height: '100%', maxHeight: '100%' }}>
               <Grid item xs={6} style={{ height: '100%', maxHeight: '100%' }}>
@@ -202,7 +202,7 @@ function ColorModel() {
             </Grid>
           </Paper>
         </Grid>
-        <Grid item xs="3" style={{ height: '100%', maxHeight: '100%' }}>
+        <Grid item xs="4" xl="3" style={{ height: '100%', maxHeight: '100%' }}>
           <Grid container direction="column" justify="space-between" style={{ height: '100%', maxHeight: '100%' }}>
             <Box>
               <Paper className={classes.paper}>
