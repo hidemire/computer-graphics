@@ -98,7 +98,7 @@ function Fractals() {
   };
 
   const onSaveButtonClick = () => {
-    Emitter.emit(`${CANVAS.FRACTALS}:${EVENTS.OPEN_CANVAS_IMAGE}`, {});
+    Emitter.emit(`${CANVAS.FRACTALS}:${EVENTS.SAVE_CANVAS_IMAGE}`, {});
   };
 
   return (

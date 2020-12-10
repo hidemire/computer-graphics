@@ -1,9 +1,10 @@
 const CANVAS = {
   FRACTALS: 'canvas-fractals',
+  COLOR_MODEL: 'canvas-color-model',
 };
 
 const EVENTS = {
-  OPEN_CANVAS_IMAGE: 'open-canvas-image',
+  SAVE_CANVAS_IMAGE: 'save-canvas-image',
 };
 
 export { CANVAS, EVENTS };

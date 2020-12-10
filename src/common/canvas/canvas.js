@@ -11,6 +11,8 @@ import { EVENTS } from 'core/constants';
 const moveStep = 10;
 const zoomStep = 0.7;
 
+const none = () => {};
+
 function Canvas(props) {
   const [position, setPosition] = useState({
     x: 0,
@@ -19,7 +21,11 @@ function Canvas(props) {
   });
   const parentRef = useRef(null);
   const canvasRef = useRef(null);
-  const { draw, name } = props;
+  const {
+    draw = none,
+    pick = none,
+    name,
+  } = props;
 
   const onOpenImageCallback = useCallback(async () => {
     const canvas = canvasRef.current;
@@ -53,7 +59,7 @@ function Canvas(props) {
   }, []);
 
   useEffect(() => {
-    const event = `${name}:${EVENTS.OPEN_CANVAS_IMAGE}`;
+    const event = `${name}:${EVENTS.SAVE_CANVAS_IMAGE}`;
     Emitter.on(event, onOpenImageCallback);
     return () => Emitter.off(event, onOpenImageCallback);
   });
@@ -69,12 +75,20 @@ function Canvas(props) {
     context.fillStyle = 'white';
 
     await draw({
+      canvas,
       context,
       position,
     });
   }, [draw]);
 
   useEffect(d, [draw, d]);
+
+  const pickCb = useCallback(async (event) => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+
+    await pick({ event, canvas, context });
+  }, [pick]);
 
   const resized = () => {
     const canvas = canvasRef.current;
@@ -119,9 +133,11 @@ function Canvas(props) {
 
     window.addEventListener('resize', resized);
     canvas.addEventListener('keydown', onKeyHandler);
+    canvas.addEventListener('mousemove', pickCb);
     return () => {
       window.removeEventListener('resize', resized);
       canvas.removeEventListener('keydown', onKeyHandler);
+      canvas.removeEventListener('mousemove', pickCb);
     };
   });
 
