@@ -2,6 +2,7 @@ import React from 'react';
 
 import Fractals from 'components/fractals/fractals';
 import ColorModel from 'components/color-model/color-model';
+import Movement from 'components/movement/movement';
 
 export default [
   {
@@ -18,5 +19,10 @@ export default [
     path: '/color-model',
     exact: true,
     component: () => <ColorModel />,
+  },
+  {
+    path: '/movement',
+    exact: true,
+    component: () => <Movement />,
   },
 ];
