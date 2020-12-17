@@ -18,7 +18,6 @@ import {
   SettingsBackupRestore as SettingsBackupRestoreIcon,
 } from '@material-ui/icons';
 import { multiply } from 'mathjs';
-import useDebounce from 'hooks/use-debounce';
 
 import BaseTemplate from 'templates/base/base';
 import Canvas from 'common/canvas/canvas';
@@ -67,13 +66,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ROTATION = {
-  LEFT: 'left',
-  RIGHT: 'right',
+  LEFT: 1,
+  RIGHT: -1,
 };
 
 const DIRECTION = {
-  LEFT: 'left',
-  RIGHT: 'right',
+  LEFT: -1,
+  RIGHT: 1,
 };
 
 const getTrianglePoint = (r, angle, { x, y }) => ({
@@ -94,13 +93,14 @@ function Movement() {
 
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [size, setSize] = useState(100);
-  const [angle, setAngle] = useState(30);
+  const [angle, setAngle] = useState(180);
   const [rotation, setRotation] = useState(ROTATION.RIGHT);
   const [direction, setDirection] = useState(DIRECTION.RIGHT);
 
   const [points, setPoints] = useState([]);
 
-  const debouncedAngle = useDebounce(angle, 1);
+  const [timer, setTimer] = useState(null);
+  const [isPlayed, setIsPlayed] = useState(false);
 
   useEffect(() => {
     const p = [
@@ -110,26 +110,54 @@ function Movement() {
     ];
 
     setPoints(p);
-  }, [position, size]);
+  }, [position, size, isPlayed]);
 
-  const movement = useCallback(() => {
-    const p = [...points];
+  const stop = useCallback(() => {
+    clearInterval(timer);
+    setTimer(null);
+    setIsPlayed(false);
+  }, [timer]);
 
-    const move = multiply(
-      getTranslationMatrix(-position.x, -position.y),
-      getRotationMatrix(debouncedAngle),
-      getTranslationMatrix(position.x, position.y),
-    );
+  const play = useCallback(() => {
+    setIsPlayed(true);
 
-    const newPoints = p.map(({ x, y }) => {
-      const arr = multiply([x, y, 1], move).toArray();
-      const [nx, ny] = arr;
+    const center = { x: Number(position.x), y: Number(position.y) };
+    let currentAngle = 0;
+    let currentPosition = 0;
 
-      return { x: nx, y: ny };
-    });
+    const angleStep = 3;
+    const moveStep = 3 * direction;
 
-    return newPoints;
-  }, [points, debouncedAngle, position]);
+    const t = setInterval(() => {
+      const p = [...points];
+      const a = currentAngle + angleStep;
+      if (a > angle) {
+        clearInterval(t);
+        return;
+      }
+      currentAngle = a;
+
+      currentPosition += moveStep;
+
+      const move = multiply(
+        getTranslationMatrix(-center.x, -center.y),
+        getRotationMatrix(a * rotation),
+        getTranslationMatrix(center.x, center.y),
+        getTranslationMatrix(currentPosition, 0),
+      );
+
+      const newPoints = p.map(({ x, y }) => {
+        const arr = multiply([x, y, 1], move).toArray();
+        const [nx, ny] = arr;
+
+        return { x: nx, y: ny };
+      });
+
+      setPoints(newPoints);
+    }, 1000 / 60);
+
+    setTimer(t);
+  }, [position, rotation, direction, points, angle]);
 
   const draw = useCallback(({ context }) => {
     context.beginPath();
@@ -137,11 +165,6 @@ function Movement() {
     const lines = points.map(pointsToLines(points));
 
     drawLines(context, lines);
-
-    // const newPoints = movement();
-    // const newLines = newPoints.map(pointsToLines(newPoints));
-
-    // drawLines(context, newLines);
 
     const grid = [
       { p0: new Point({ x: 0, y: 10000 }), p1: new Point({ x: 0, y: -10000 }) },
@@ -151,7 +174,7 @@ function Movement() {
     drawLines(context, grid);
 
     context.closePath();
-  }, [points, movement]);
+  }, [points]);
 
   const handlePositionChange = (event, field) => {
     setPosition((p) => ({
@@ -261,6 +284,7 @@ function Movement() {
                     max={360}
                     onChange={handleSliderChange}
                     aria-labelledby="input-slider"
+                    valueLabelDisplay="auto"
                     marks={[
                       { value: 0, label: '0' },
                       { value: 360, label: '360' },
@@ -323,8 +347,8 @@ function Movement() {
                   </Grid>
                 </FormControl>
                 <FormControl className={classes.formControl}>
-                  <Button variant="contained" size="medium" color="primary">
-                    Play
+                  <Button onClick={isPlayed ? stop : play} variant="contained" size="medium" color="primary">
+                    {isPlayed ? 'Stop' : 'play'}
                   </Button>
                 </FormControl>
               </Paper>
