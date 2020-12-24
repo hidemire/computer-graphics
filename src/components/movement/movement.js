@@ -6,7 +6,9 @@ import {
   FormControl,
   Grid,
   makeStyles,
+  MenuItem,
   Paper,
+  Select,
   Slider,
   TextField,
   Typography,
@@ -29,6 +31,7 @@ import {
   getTranslationMatrix,
   getRotationMatrix,
 } from './matrix';
+import { getCenter, getThirdPoint } from './triangle';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,11 +78,6 @@ const DIRECTION = {
   RIGHT: 1,
 };
 
-const getTrianglePoint = (r, angle, { x, y }) => ({
-  x: r * Math.cos(angle) + Number(x),
-  y: r * Math.sin(angle) + Number(y),
-});
-
 const pointsToLines = (points) => ({ x, y }, index) => {
   const nextPoint = index + 1 === points.length ? 0 : index + 1;
   const p0 = new Point({ x, y });
@@ -91,8 +89,15 @@ const pointsToLines = (points) => ({ x, y }, index) => {
 function Movement() {
   const classes = useStyles();
 
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [size, setSize] = useState(100);
+  const [P1, setP1] = useState({ x: 0, y: 0 });
+  const [P2, setP2] = useState({ x: 0, y: 0 });
+
+  const [P3Set, setP3Set] = useState([
+    { x: 0, y: 0 },
+    { x: 0, y: 0 },
+  ]);
+  const [p3Rotation, setP3Rotation] = useState(0);
+
   const [angle, setAngle] = useState(180);
   const [rotation, setRotation] = useState(ROTATION.RIGHT);
   const [direction, setDirection] = useState(DIRECTION.RIGHT);
@@ -103,14 +108,16 @@ function Movement() {
   const [isPlayed, setIsPlayed] = useState(false);
 
   useEffect(() => {
+    const P3set = getThirdPoint(P1, P2);
+    setP3Set(P3set);
     const p = [
-      getTrianglePoint(size, 0, position),
-      getTrianglePoint(size, (1 / 3) * 2 * Math.PI, position),
-      getTrianglePoint(size, (2 / 3) * 2 * Math.PI, position),
+      P1,
+      P2,
+      P3set[p3Rotation],
     ];
 
     setPoints(p);
-  }, [position, size, isPlayed]);
+  }, [P1, P2, p3Rotation, isPlayed]);
 
   const stop = useCallback(() => {
     clearInterval(timer);
@@ -121,7 +128,7 @@ function Movement() {
   const play = useCallback(() => {
     setIsPlayed(true);
 
-    const center = { x: Number(position.x), y: Number(position.y) };
+    const center = getCenter(points);
     let currentAngle = 0;
     let currentPosition = 0;
 
@@ -157,7 +164,7 @@ function Movement() {
     }, 1000 / 60);
 
     setTimer(t);
-  }, [position, rotation, direction, points, angle]);
+  }, [rotation, direction, points, angle]);
 
   const draw = useCallback(({ context }) => {
     context.beginPath();
@@ -176,15 +183,27 @@ function Movement() {
     context.closePath();
   }, [points]);
 
-  const handlePositionChange = (event, field) => {
-    setPosition((p) => ({
-      ...p,
-      [field]: event.target.value,
-    }));
+  const handlePointChange = (event, po, field) => {
+    switch (po) {
+      case 'P1':
+        setP1((p) => ({
+          ...p,
+          [field]: event.target.value,
+        }));
+        break;
+      case 'P2':
+        setP2((p) => ({
+          ...p,
+          [field]: event.target.value,
+        }));
+        break;
+      default:
+        break;
+    }
   };
 
-  const handleSizeChange = (event) => {
-    setSize(event.target.value);
+  const handleThirdPointChange = (event) => {
+    setP3Rotation(event.target.value);
   };
 
   const handleSliderChange = (event, newValue) => {
@@ -211,7 +230,7 @@ function Movement() {
       <Grid container spacing={3} style={{ height: '86vh' }}>
         <Grid item xs="9" style={{ height: '100%', maxHeight: '100%' }}>
           <Paper style={{ height: '100%', maxHeight: '100%' }}>
-            <Canvas draw={draw} name="img" />
+            <Canvas name={CANVAS.MOVEMENT} draw={draw} />
           </Paper>
         </Grid>
         <Grid item xs="3" style={{ height: '100%', maxHeight: '100%' }}>
@@ -228,7 +247,7 @@ function Movement() {
                 </Box>
                 <FormControl className={classes.formControl}>
                   <Typography id="input-slider" variant="subtitle2" gutterBottom>
-                    Центр трикутника
+                    Точка №1
                   </Typography>
                   <Grid container alignItems="center" justify="space-between">
                     <TextField
@@ -237,8 +256,8 @@ function Movement() {
                       type="number"
                       size="small"
                       style={{ width: '100px' }}
-                      onChange={(e) => handlePositionChange(e, 'x')}
-                      value={position.x}
+                      onChange={(e) => handlePointChange(e, 'P1', 'x')}
+                      value={P1.x}
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -249,8 +268,8 @@ function Movement() {
                       style={{ width: '100px' }}
                       type="number"
                       size="small"
-                      onChange={(e) => handlePositionChange(e, 'y')}
-                      value={position.y}
+                      onChange={(e) => handlePointChange(e, 'P1', 'y')}
+                      value={P1.y}
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -259,20 +278,49 @@ function Movement() {
                 </FormControl>
                 <FormControl className={classes.formControl}>
                   <Typography id="input-slider" variant="subtitle2" gutterBottom>
-                    Розмір трикутника
+                    Точка №2
                   </Typography>
-                  <TextField
-                    id="standard-number"
-                    label=""
-                    type="number"
-                    size="small"
-                    style={{ width: '100%' }}
-                    onChange={handleSizeChange}
-                    value={size}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
+                  <Grid container alignItems="center" justify="space-between">
+                    <TextField
+                      id="standard-number"
+                      label="X"
+                      type="number"
+                      size="small"
+                      style={{ width: '100px' }}
+                      onChange={(e) => handlePointChange(e, 'P2', 'x')}
+                      value={P2.x}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                    <TextField
+                      id="standard-number"
+                      label="Y"
+                      style={{ width: '100px' }}
+                      type="number"
+                      size="small"
+                      onChange={(e) => handlePointChange(e, 'P2', 'y')}
+                      value={P2.y}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                  </Grid>
+                </FormControl>
+                <FormControl className={classes.formControl}>
+                  <Typography id="input-slider" variant="subtitle2" gutterBottom>
+                    Точка №3
+                  </Typography>
+                  <Select
+                    displayEmpty
+                    value={p3Rotation}
+                    onChange={handleThirdPointChange}
+                    className={classes.selectEmpty}
+                    inputProps={{ 'aria-label': 'Without label' }}
+                  >
+                    <MenuItem value={0}>{`X: ${P3Set[0].x} Y: ${P3Set[0].y}`}</MenuItem>
+                    <MenuItem value={1}>{`X: ${P3Set[1].x} Y: ${P3Set[1].y}`}</MenuItem>
+                  </Select>
                 </FormControl>
                 <FormControl className={classes.formControl}>
                   <Typography id="input-slider" variant="subtitle2" gutterBottom>
