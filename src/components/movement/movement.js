@@ -5,6 +5,7 @@ import {
   Fab,
   FormControl,
   Grid,
+  IconButton,
   makeStyles,
   MenuItem,
   Paper,
@@ -20,9 +21,12 @@ import {
   SettingsBackupRestore as SettingsBackupRestoreIcon,
 } from '@material-ui/icons';
 import { multiply } from 'mathjs';
+import clsx from 'clsx';
 
 import BaseTemplate from 'templates/base/base';
 import Canvas from 'common/canvas/canvas';
+import Tutorial from 'common/tutorial/tutorial';
+
 import { CANVAS, EVENTS } from 'core/constants';
 import Emitter from 'core/events';
 import { drawLines, Point } from 'helpers/canvas';
@@ -32,6 +36,7 @@ import {
   getRotationMatrix,
 } from './matrix';
 import { getCenter, getThirdPoint } from './triangle';
+import tutorialSteps from './tutorial-steps';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,6 +70,9 @@ const useStyles = makeStyles((theme) => ({
   },
   rotateIcon: {
     transform: 'scaleX(-1)',
+  },
+  tutorialWrapper: {
+    backgroundColor: 'white',
   },
 }));
 
@@ -214,8 +222,13 @@ function Movement() {
     Emitter.emit(`${CANVAS.MOVEMENT}:${EVENTS.SAVE_CANVAS_IMAGE}`, {});
   };
 
+  const startTutorial = () => {
+    Emitter.emit(`movement:${EVENTS.START_TUTORIAL}`);
+  };
+
   return (
     <BaseTemplate>
+      <Tutorial name="movement" steps={tutorialSteps} />
       <Grid
         container
         component={Paper}
@@ -225,15 +238,17 @@ function Movement() {
         alignItems="center"
       >
         <Button color="primary" variant="contained">Рух</Button>
-        <LiveHelpIcon fontSize="large" />
+        <IconButton onClick={startTutorial}>
+          <LiveHelpIcon fontSize="large" />
+        </IconButton>
       </Grid>
-      <Grid container spacing={3} style={{ height: '86vh' }}>
-        <Grid item xs="9" style={{ height: '100%', maxHeight: '100%' }}>
-          <Paper style={{ height: '100%', maxHeight: '100%' }}>
+      <Grid container spacing={3} style={{ height: '83vh' }}>
+        <Grid item xs="8" xl="9" style={{ height: '100%', maxHeight: '100%' }}>
+          <Paper style={{ height: '100%', maxHeight: '100%' }} className="tutorial-step--canvas">
             <Canvas name={CANVAS.MOVEMENT} draw={draw} />
           </Paper>
         </Grid>
-        <Grid item xs="3" style={{ height: '100%', maxHeight: '100%' }}>
+        <Grid item xs="4" xl="3" style={{ height: '100%', maxHeight: '100%' }}>
           <Grid container direction="column" justify="space-between" style={{ height: '100%', maxHeight: '100%' }}>
             <Box>
               <Paper className={classes.paper}>
@@ -245,84 +260,86 @@ function Movement() {
                 >
                   Налаштування
                 </Box>
-                <FormControl className={classes.formControl}>
-                  <Typography id="input-slider" variant="subtitle2" gutterBottom>
-                    Точка №1
-                  </Typography>
-                  <Grid container alignItems="center" justify="space-between">
-                    <TextField
-                      id="standard-number"
-                      label="X"
-                      type="number"
-                      size="small"
-                      style={{ width: '100px' }}
-                      onChange={(e) => handlePointChange(e, 'P1', 'x')}
-                      value={P1.x}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                    />
-                    <TextField
-                      id="standard-number"
-                      label="Y"
-                      style={{ width: '100px' }}
-                      type="number"
-                      size="small"
-                      onChange={(e) => handlePointChange(e, 'P1', 'y')}
-                      value={P1.y}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                    />
-                  </Grid>
-                </FormControl>
-                <FormControl className={classes.formControl}>
-                  <Typography id="input-slider" variant="subtitle2" gutterBottom>
-                    Точка №2
-                  </Typography>
-                  <Grid container alignItems="center" justify="space-between">
-                    <TextField
-                      id="standard-number"
-                      label="X"
-                      type="number"
-                      size="small"
-                      style={{ width: '100px' }}
-                      onChange={(e) => handlePointChange(e, 'P2', 'x')}
-                      value={P2.x}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                    />
-                    <TextField
-                      id="standard-number"
-                      label="Y"
-                      style={{ width: '100px' }}
-                      type="number"
-                      size="small"
-                      onChange={(e) => handlePointChange(e, 'P2', 'y')}
-                      value={P2.y}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                    />
-                  </Grid>
-                </FormControl>
-                <FormControl className={classes.formControl}>
-                  <Typography id="input-slider" variant="subtitle2" gutterBottom>
-                    Точка №3
-                  </Typography>
-                  <Select
-                    displayEmpty
-                    value={p3Rotation}
-                    onChange={handleThirdPointChange}
-                    className={classes.selectEmpty}
-                    inputProps={{ 'aria-label': 'Without label' }}
-                  >
-                    <MenuItem value={0}>{`X: ${P3Set[0].x} Y: ${P3Set[0].y}`}</MenuItem>
-                    <MenuItem value={1}>{`X: ${P3Set[1].x} Y: ${P3Set[1].y}`}</MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl className={classes.formControl}>
+                <div className="tutorial-step--points">
+                  <FormControl className={classes.formControl}>
+                    <Typography id="input-slider" variant="subtitle2" gutterBottom>
+                      Точка №1
+                    </Typography>
+                    <Grid container alignItems="center" justify="space-between">
+                      <TextField
+                        id="standard-number"
+                        label="X"
+                        type="number"
+                        size="small"
+                        style={{ width: '100px' }}
+                        onChange={(e) => handlePointChange(e, 'P1', 'x')}
+                        value={P1.x}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                      <TextField
+                        id="standard-number"
+                        label="Y"
+                        style={{ width: '100px' }}
+                        type="number"
+                        size="small"
+                        onChange={(e) => handlePointChange(e, 'P1', 'y')}
+                        value={P1.y}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                    </Grid>
+                  </FormControl>
+                  <FormControl className={classes.formControl}>
+                    <Typography id="input-slider" variant="subtitle2" gutterBottom>
+                      Точка №2
+                    </Typography>
+                    <Grid container alignItems="center" justify="space-between">
+                      <TextField
+                        id="standard-number"
+                        label="X"
+                        type="number"
+                        size="small"
+                        style={{ width: '100px' }}
+                        onChange={(e) => handlePointChange(e, 'P2', 'x')}
+                        value={P2.x}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                      <TextField
+                        id="standard-number"
+                        label="Y"
+                        style={{ width: '100px' }}
+                        type="number"
+                        size="small"
+                        onChange={(e) => handlePointChange(e, 'P2', 'y')}
+                        value={P2.y}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                    </Grid>
+                  </FormControl>
+                  <FormControl className={classes.formControl}>
+                    <Typography id="input-slider" variant="subtitle2" gutterBottom>
+                      Точка №3
+                    </Typography>
+                    <Select
+                      displayEmpty
+                      value={p3Rotation}
+                      onChange={handleThirdPointChange}
+                      className={classes.selectEmpty}
+                      inputProps={{ 'aria-label': 'Without label' }}
+                    >
+                      <MenuItem value={0}>{`X: ${P3Set[0].x} Y: ${P3Set[0].y}`}</MenuItem>
+                      <MenuItem value={1}>{`X: ${P3Set[1].x} Y: ${P3Set[1].y}`}</MenuItem>
+                    </Select>
+                  </FormControl>
+                </div>
+                <FormControl className={clsx(classes.formControl, 'tutorial-step--angle')}>
                   <Typography id="input-slider" variant="subtitle2" gutterBottom>
                     Кут повороту
                   </Typography>
@@ -344,7 +361,7 @@ function Movement() {
                     Напрям
                   </Typography>
                   <Grid container alignItems="center" justify="space-between">
-                    <Grid item>
+                    <Grid item className="tutorial-step--movement">
                       <Grid container spacing={1}>
                         <Grid item>
                           <Fab
@@ -368,7 +385,7 @@ function Movement() {
                         </Grid>
                       </Grid>
                     </Grid>
-                    <Grid item>
+                    <Grid item className="tutorial-step--rotation">
                       <Grid container spacing={1}>
                         <Grid item>
                           <Fab
@@ -394,16 +411,16 @@ function Movement() {
                     </Grid>
                   </Grid>
                 </FormControl>
-                <FormControl className={classes.formControl}>
+                <FormControl className={clsx(classes.formControl, 'tutorial-step--play')}>
                   <Button onClick={isPlayed ? stop : play} variant="contained" size="medium" color="primary">
                     {isPlayed ? 'Stop' : 'play'}
                   </Button>
                 </FormControl>
               </Paper>
             </Box>
-            <Box>
+            <Box p={2} className={clsx(classes.tutorialWrapper)}>
               <Grid container justify="space-between">
-                <Fab onClick={onSaveButtonClick} variant="extended" color="primary">
+                <Fab onClick={onSaveButtonClick} variant="extended" className="tutorial-step--buttons" color="primary">
                   Зберегти
                 </Fab>
               </Grid>

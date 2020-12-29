@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import clsx from 'clsx';
 import {
   Grid,
   makeStyles,
@@ -13,6 +14,7 @@ import {
   Input,
   Slider,
   Fab,
+  IconButton,
 } from '@material-ui/core';
 import {
   LiveHelp as LiveHelpIcon,
@@ -20,12 +22,14 @@ import {
 
 import BaseTemplate from 'templates/base/base';
 import Canvas from 'common/canvas/canvas';
+import Tutorial from 'common/tutorial/tutorial';
 
 import Emitter from 'core/events';
 import { CANVAS, EVENTS } from 'core/constants';
 
 import treeDrawer from './tree-drawer';
 import snowflakeDrawer from './snowflake-drawer';
+import tutorialSteps from './tutorial-steps';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,6 +54,9 @@ const useStyles = makeStyles((theme) => ({
   },
   input: {
     width: 42,
+  },
+  tutorialWrapper: {
+    backgroundColor: 'white',
   },
 }));
 
@@ -101,8 +108,13 @@ function Fractals() {
     Emitter.emit(`${CANVAS.FRACTALS}:${EVENTS.SAVE_CANVAS_IMAGE}`, {});
   };
 
+  const startTutorial = () => {
+    Emitter.emit(`fractals:${EVENTS.START_TUTORIAL}`);
+  };
+
   return (
     <BaseTemplate>
+      <Tutorial name="fractals" steps={tutorialSteps} />
       <Grid
         container
         component={Paper}
@@ -112,17 +124,19 @@ function Fractals() {
         alignItems="center"
       >
         <Button color="primary" variant="contained">Фрактали</Button>
-        <LiveHelpIcon fontSize="large" />
+        <IconButton onClick={startTutorial}>
+          <LiveHelpIcon fontSize="large" />
+        </IconButton>
       </Grid>
-      <Grid container spacing={3} style={{ height: '86vh' }}>
-        <Grid item xs="9" style={{ height: '100%', maxHeight: '100%' }}>
-          <Paper style={{ height: '100%', maxHeight: '100%' }}>
+      <Grid container spacing={3} style={{ height: '83vh' }}>
+        <Grid item xs="8" xl="9" style={{ height: '100%', maxHeight: '100%' }}>
+          <Paper style={{ height: '100%', maxHeight: '100%' }} className="tutorial-step--canvas">
             <Canvas draw={draw} name={CANVAS.FRACTALS} />
           </Paper>
         </Grid>
-        <Grid item xs="3" style={{ height: '100%', maxHeight: '100%' }}>
+        <Grid item xs="4" xl="3" style={{ height: '100%', maxHeight: '100%' }}>
           <Grid container direction="column" justify="space-between" style={{ height: '100%', maxHeight: '100%' }}>
-            <Paper className={classes.paper}>
+            <Paper className={clsx(classes.paper, 'tutorial-step--settings')}>
               <Box
                 fontWeight="fontWeightBold"
                 fontSize="subtitle2.fontSize"
@@ -182,8 +196,8 @@ function Fractals() {
                 </Grid>
               </FormControl>
             </Paper>
-            <Box>
-              <Fab onClick={onSaveButtonClick} variant="extended" color="primary">
+            <Box p={1} className={clsx(classes.tutorialWrapper)}>
+              <Fab onClick={onSaveButtonClick} variant="extended" className="tutorial-step--buttons" color="primary">
                 Зберегти
               </Fab>
             </Box>

@@ -13,15 +13,19 @@ import {
   Paper,
   Slider,
   Typography,
+  IconButton,
 } from '@material-ui/core';
 import {
   LiveHelp as LiveHelpIcon,
 } from '@material-ui/icons';
+import clsx from 'clsx';
 
 import { useDebouncedCallback } from 'use-debounce';
 
 import BaseTemplate from 'templates/base/base';
 import Canvas from 'common/canvas/canvas';
+import Tutorial from 'common/tutorial/tutorial';
+
 import {
   pixelData2RGBA,
   rgb2cmyk,
@@ -37,6 +41,7 @@ import Emitter from 'core/events';
 import { CANVAS, EVENTS } from 'core/constants';
 
 import CustomSlider from './slider';
+import tutorialSteps from './tutorial-steps';
 
 const normalize = (val) => Math.floor(val);
 
@@ -44,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
+    maxHeight: '100vh',
   },
   sticky: {
     position: 'sticky',
@@ -69,6 +75,9 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: '100%',
     width: '100%',
     maxWidth: '100%',
+  },
+  tutorialWrapper: {
+    backgroundColor: 'white',
   },
 }));
 
@@ -172,8 +181,13 @@ function ColorModel() {
     setHsl(rgb2hsl(rgb));
   }, 50);
 
+  const startTutorial = () => {
+    Emitter.emit(`color-model:${EVENTS.START_TUTORIAL}`);
+  };
+
   return (
-    <BaseTemplate>
+    <BaseTemplate className={classes.root}>
+      <Tutorial name="color-model" steps={tutorialSteps} />
       <Grid
         container
         component={Paper}
@@ -183,11 +197,13 @@ function ColorModel() {
         alignItems="center"
       >
         <Button color="primary" variant="contained">Колірні моделі</Button>
-        <LiveHelpIcon fontSize="large" />
+        <IconButton onClick={startTutorial}>
+          <LiveHelpIcon fontSize="large" />
+        </IconButton>
       </Grid>
-      <Grid container spacing={3} style={{ height: '86vh' }}>
+      <Grid container spacing={3} style={{ height: '84vh' }}>
         <Grid item xs="8" xl="9" style={{ height: '100%', maxHeight: '100%' }}>
-          <Paper style={{ height: '100%', maxHeight: '100%' }}>
+          <Paper style={{ height: '100%', maxHeight: '100%' }} className="tutorial-step--canvas">
             <Grid container direction="row" spacing={3} justify="space-between" style={{ height: '100%', maxHeight: '100%' }}>
               <Grid item xs={6} style={{ height: '100%', maxHeight: '100%' }}>
                 <Canvas draw={drawBaseImage} pick={pickDebounce.callback} name="img" />
@@ -205,7 +221,7 @@ function ColorModel() {
         <Grid item xs="4" xl="3" style={{ height: '100%', maxHeight: '100%' }}>
           <Grid container direction="column" justify="space-between" style={{ height: '100%', maxHeight: '100%' }}>
             <Box>
-              <Paper className={classes.paper}>
+              <Paper className={clsx(classes.paper, 'tutorial-step--blue-bright')}>
                 <Box
                   fontWeight="fontWeightBold"
                   fontSize="subtitle2.fontSize"
@@ -229,7 +245,7 @@ function ColorModel() {
                   />
                 </FormControl>
               </Paper>
-              <Paper className={classes.paper}>
+              <Paper className={clsx(classes.paper, 'tutorial-step--colors')}>
                 <FormControl className={classes.formControl}>
                   <Grid container direction="row" spacing={1} justify="space-around">
                     <Grid item>
@@ -356,7 +372,7 @@ function ColorModel() {
                 </FormControl>
               </Paper>
             </Box>
-            <Box>
+            <Box p={2} className={clsx('tutorial-step--buttons', classes.tutorialWrapper)}>
               <Grid container justify="space-between">
                 <input
                   ref={uploadButtonRef}

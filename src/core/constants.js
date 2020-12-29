@@ -6,6 +6,7 @@ const CANVAS = {
 
 const EVENTS = {
   SAVE_CANVAS_IMAGE: 'save-canvas-image',
+  START_TUTORIAL: 'start-tutorial',
 };
 
 export { CANVAS, EVENTS };
