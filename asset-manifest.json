@@ -1,22 +1,36 @@
 {
   "files": {
-    "main.css": "/computer-graphics/static/css/main.8c8b27cf.chunk.css",
-    "main.js": "/computer-graphics/static/js/main.f2773023.chunk.js",
-    "main.js.map": "/computer-graphics/static/js/main.f2773023.chunk.js.map",
-    "runtime-main.js": "/computer-graphics/static/js/runtime-main.aa268052.js",
-    "runtime-main.js.map": "/computer-graphics/static/js/runtime-main.aa268052.js.map",
-    "static/js/2.d93c6cea.chunk.js": "/computer-graphics/static/js/2.d93c6cea.chunk.js",
-    "static/js/2.d93c6cea.chunk.js.map": "/computer-graphics/static/js/2.d93c6cea.chunk.js.map",
-    "static/js/3.a3483aee.chunk.js": "/computer-graphics/static/js/3.a3483aee.chunk.js",
-    "static/js/3.a3483aee.chunk.js.map": "/computer-graphics/static/js/3.a3483aee.chunk.js.map",
+    "main.css": "/computer-graphics/static/css/main.901993db.chunk.css",
+    "main.js": "/computer-graphics/static/js/main.b879aa85.chunk.js",
+    "main.js.map": "/computer-graphics/static/js/main.b879aa85.chunk.js.map",
+    "runtime-main.js": "/computer-graphics/static/js/runtime-main.1fe53471.js",
+    "runtime-main.js.map": "/computer-graphics/static/js/runtime-main.1fe53471.js.map",
+    "static/js/2.fec8842a.chunk.js": "/computer-graphics/static/js/2.fec8842a.chunk.js",
+    "static/js/2.fec8842a.chunk.js.map": "/computer-graphics/static/js/2.fec8842a.chunk.js.map",
+    "static/js/3.ce85ca2e.chunk.js": "/computer-graphics/static/js/3.ce85ca2e.chunk.js",
+    "static/js/3.ce85ca2e.chunk.js.map": "/computer-graphics/static/js/3.ce85ca2e.chunk.js.map",
     "index.html": "/computer-graphics/index.html",
-    "static/css/main.8c8b27cf.chunk.css.map": "/computer-graphics/static/css/main.8c8b27cf.chunk.css.map",
-    "static/js/2.d93c6cea.chunk.js.LICENSE.txt": "/computer-graphics/static/js/2.d93c6cea.chunk.js.LICENSE.txt"
+    "static/css/main.901993db.chunk.css.map": "/computer-graphics/static/css/main.901993db.chunk.css.map",
+    "static/js/2.fec8842a.chunk.js.LICENSE.txt": "/computer-graphics/static/js/2.fec8842a.chunk.js.LICENSE.txt",
+    "static/media/1.f80d6dc9.png": "/computer-graphics/static/media/1.f80d6dc9.png",
+    "static/media/2.14b9e7ed.png": "/computer-graphics/static/media/2.14b9e7ed.png",
+    "static/media/3.5ce9983d.png": "/computer-graphics/static/media/3.5ce9983d.png",
+    "static/media/4.5eaaeca9.png": "/computer-graphics/static/media/4.5eaaeca9.png",
+    "static/media/cmy.493ae20e.png": "/computer-graphics/static/media/cmy.493ae20e.png",
+    "static/media/colors.66d53698.png": "/computer-graphics/static/media/colors.66d53698.png",
+    "static/media/computer.3d2e722d.png": "/computer-graphics/static/media/computer.3d2e722d.png",
+    "static/media/fern.5db7ab31.png": "/computer-graphics/static/media/fern.5db7ab31.png",
+    "static/media/hsv.378af309.png": "/computer-graphics/static/media/hsv.378af309.png",
+    "static/media/matrix.bc39f9d2.png": "/computer-graphics/static/media/matrix.bc39f9d2.png",
+    "static/media/movement.ff9d489f.png": "/computer-graphics/static/media/movement.ff9d489f.png",
+    "static/media/rgb.48815a8d.png": "/computer-graphics/static/media/rgb.48815a8d.png",
+    "static/media/rotation.f95a1268.png": "/computer-graphics/static/media/rotation.f95a1268.png",
+    "static/media/scaling.ff4cdeae.png": "/computer-graphics/static/media/scaling.ff4cdeae.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.aa268052.js",
-    "static/js/2.d93c6cea.chunk.js",
-    "static/css/main.8c8b27cf.chunk.css",
-    "static/js/main.f2773023.chunk.js"
+    "static/js/runtime-main.1fe53471.js",
+    "static/js/2.fec8842a.chunk.js",
+    "static/css/main.901993db.chunk.css",
+    "static/js/main.b879aa85.chunk.js"
   ]
 }
